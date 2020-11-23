@@ -56,15 +56,39 @@
 		00AD56FF256C0B2200F223D8 /* the-movie-iOS */ = {
 			isa = PBXGroup;
 			children = (
+				00AD5718256C0B3F00F223D8 /* Model */,
+				00AD5716256C0B3800F223D8 /* View */,
+				00AD5715256C0B2E00F223D8 /* Controller */,
 				00AD5700256C0B2200F223D8 /* AppDelegate.swift */,
 				00AD5702256C0B2200F223D8 /* SceneDelegate.swift */,
-				00AD5704256C0B2200F223D8 /* ViewController.swift */,
-				00AD5706256C0B2200F223D8 /* Main.storyboard */,
 				00AD5709256C0B2500F223D8 /* Assets.xcassets */,
 				00AD570B256C0B2500F223D8 /* LaunchScreen.storyboard */,
 				00AD570E256C0B2500F223D8 /* Info.plist */,
 			);
 			path = "the-movie-iOS";
+			sourceTree = "<group>";
+		};
+		00AD5715256C0B2E00F223D8 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				00AD5704256C0B2200F223D8 /* ViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		00AD5716256C0B3800F223D8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				00AD5706256C0B2200F223D8 /* Main.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		00AD5718256C0B3F00F223D8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
