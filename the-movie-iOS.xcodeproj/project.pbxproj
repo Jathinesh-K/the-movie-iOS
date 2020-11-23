@@ -13,6 +13,8 @@
 		00AD5708256C0B2200F223D8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00AD5706256C0B2200F223D8 /* Main.storyboard */; };
 		00AD570A256C0B2500F223D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 00AD5709256C0B2500F223D8 /* Assets.xcassets */; };
 		00AD570D256C0B2500F223D8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 00AD570B256C0B2500F223D8 /* LaunchScreen.storyboard */; };
+		00C72FC6256C1072008B0F2B /* MovieManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C72FC5256C1072008B0F2B /* MovieManager.swift */; };
+		00C72FC9256C10F9008B0F2B /* MovieData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C72FC8256C10F9008B0F2B /* MovieData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		00AD5709256C0B2500F223D8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		00AD570C256C0B2500F223D8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		00AD570E256C0B2500F223D8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		00C72FC5256C1072008B0F2B /* MovieManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieManager.swift; sourceTree = "<group>"; };
+		00C72FC8256C10F9008B0F2B /* MovieData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +91,8 @@
 		00AD5718256C0B3F00F223D8 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				00C72FC5256C1072008B0F2B /* MovieManager.swift */,
+				00C72FC8256C10F9008B0F2B /* MovieData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -161,8 +167,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00C72FC6256C1072008B0F2B /* MovieManager.swift in Sources */,
 				00AD5705256C0B2200F223D8 /* ViewController.swift in Sources */,
 				00AD5701256C0B2200F223D8 /* AppDelegate.swift in Sources */,
+				00C72FC9256C10F9008B0F2B /* MovieData.swift in Sources */,
 				00AD5703256C0B2200F223D8 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
