@@ -13,13 +13,20 @@ protocol MovieDelegate {
 }
 
 struct MovieManager {
-    let baseURL = "https://api.themoviedb.org/3/movie/"
+    let baseURL = "https://api.themoviedb.org/3/"
     var delegate: MovieDelegate?
     
-    func fetchData(_ category: String?) {
-        let text = category ?? "now_playing"
-        let finalURL = baseURL + text + "?api_key=1f905a852b95d49aad26cde642046599"
-        return performRequest(with : finalURL)
+    func fetchData(_ category: String?, _ query: String?) {
+        if let safeQuery = query{
+            let finalURL = baseURL + "search/movie" + "?api_key=1f905a852b95d49aad26cde642046599&query=" + safeQuery
+            
+            return performRequest(with: finalURL)
+        } else {
+            let text = category ?? "now_playing"
+            let finalURL = baseURL + "movie/" + text + "?api_key=1f905a852b95d49aad26cde642046599"
+            
+            return performRequest(with : finalURL)
+        }
     }
     
     func performRequest(with urlString: String) {
@@ -31,6 +38,7 @@ struct MovieManager {
                 if error != nil {
                     print(error!)
                     self.delegate?.didFail(error: error)
+                    
                     return
                 }
                 
@@ -49,12 +57,11 @@ struct MovieManager {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(MovieData.self, from: apiData)
-//            print(decodedData.results[1].title)
-//            let body = decodedData[0].body
-//
+            
             return decodedData
         } catch {
             self.delegate?.didFail(error: error)
+            
             return  nil
         }
         

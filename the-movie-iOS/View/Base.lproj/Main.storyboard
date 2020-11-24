@@ -16,14 +16,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="right" clearsOnBeginEditing="YES" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="muJ-Iq-DzT">
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Search" textAlignment="right" clearsOnBeginEditing="YES" minimumFontSize="12" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="muJ-Iq-DzT">
                                 <rect key="frame" x="20" y="98" width="338" height="40"/>
                                 <color key="backgroundColor" systemColor="systemFillColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="oFB-cJ-a7Q"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="go"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="go"/>
                             </textField>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="qDs-si-GYc">
                                 <rect key="frame" x="20" y="163" width="388" height="729"/>
@@ -37,9 +37,12 @@
                                 <cells/>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yjc-rM-cYA">
-                                <rect key="frame" x="366" y="103" width="46" height="30"/>
+                                <rect key="frame" x="366" y="99" width="46" height="39"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" backgroundImage="line.horizontal.3.decrease.circle" catalog="system">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
                                 <connections>
                                     <action selector="sortButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NgK-sk-4SN"/>
                                 </connections>
@@ -60,6 +63,7 @@
                     <navigationItem key="navigationItem" title="The Movie" id="VYh-MC-KzT"/>
                     <connections>
                         <outlet property="collectionView" destination="qDs-si-GYc" id="BsQ-JC-D3E"/>
+                        <outlet property="searchTextField" destination="muJ-Iq-DzT" id="sgT-0Q-3TA"/>
                         <outlet property="sortOrderButton" destination="yjc-rM-cYA" id="tOX-rV-Erg"/>
                     </connections>
                 </viewController>
@@ -87,6 +91,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="line.horizontal.3.decrease.circle" catalog="system" width="128" height="121"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
