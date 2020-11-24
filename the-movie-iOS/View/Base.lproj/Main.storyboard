@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--The Movie-->
+        <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="the_movie_iOS" customModuleProvider="target" sceneMemberID="viewController">
@@ -39,10 +39,8 @@
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yjc-rM-cYA">
                                 <rect key="frame" x="366" y="99" width="46" height="39"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <state key="normal" backgroundImage="line.horizontal.3.decrease.circle" catalog="system">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </state>
+                                <color key="tintColor" systemColor="labelColor"/>
+                                <state key="normal" backgroundImage="line.horizontal.3.decrease.circle" catalog="system"/>
                                 <connections>
                                     <action selector="sortButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NgK-sk-4SN"/>
                                 </connections>
@@ -60,16 +58,60 @@
                             <constraint firstItem="muJ-Iq-DzT" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="plW-di-Wq4"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="The Movie" id="VYh-MC-KzT"/>
+                    <navigationItem key="navigationItem" id="VYh-MC-KzT">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="sPU-ti-2fM"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="qDs-si-GYc" id="BsQ-JC-D3E"/>
                         <outlet property="searchTextField" destination="muJ-Iq-DzT" id="sgT-0Q-3TA"/>
                         <outlet property="sortOrderButton" destination="yjc-rM-cYA" id="tOX-rV-Erg"/>
+                        <segue destination="9Sa-fx-Ndk" kind="show" identifier="showDetail" id="UEE-75-iMg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="600" y="-44.060475161987043"/>
+            <point key="canvasLocation" x="-8" y="-44"/>
+        </scene>
+        <!--Details View Controller-->
+        <scene sceneID="3dp-qB-j4C">
+            <objects>
+                <viewController id="9Sa-fx-Ndk" customClass="DetailsViewController" customModule="the_movie_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="wlT-Fx-mLW">
+                        <rect key="frame" x="0.0" y="0.0" width="428" height="926"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nxb-Vx-ZPN">
+                                <rect key="frame" x="20" y="105" width="388" height="62"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="32"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Overview" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6z1-dl-9ez">
+                                <rect key="frame" x="20" y="538" width="138" height="38"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lS0-Y3-8ES">
+                                <rect key="frame" x="20" y="175" width="226" height="341"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="aXF-bC-efI"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="RTi-fW-30c"/>
+                    <connections>
+                        <outlet property="titleLabel" destination="Nxb-Vx-ZPN" id="zNf-cR-QkH"/>
+                        <outlet property="titlePoster" destination="lS0-Y3-8ES" id="Y1w-CW-zIB"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WkR-vn-WVb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="762.61682242990651" y="-44.060475161987043"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Ylj-JK-Xiz">
@@ -87,11 +129,14 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oXQ-YK-yYm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-300" y="-44.060475161987043"/>
+            <point key="canvasLocation" x="-8" y="-44"/>
         </scene>
     </scenes>
     <resources>
         <image name="line.horizontal.3.decrease.circle" catalog="system" width="128" height="121"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -9,4 +9,5 @@ struct Constants {
     static let cellIdentifier = "cell"
     static let cellNibName = "MovieCell"
     static let appName = "The Movie"
+    static let segueIdentifier = "showDetail"
 }

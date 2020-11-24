@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var sortOrderButton: UIButton!
     @IBOutlet weak var searchTextField: UITextField!
+    var cellIndex = 0
     
     
     
@@ -76,13 +77,22 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.moviePoster.image = nil
         cell.movieTitle.text = data?.results[indexPath.row].title
         if data?.results[indexPath.row].posterPath != nil {
-            cell.moviePoster.load(url: URL(string: "https://image.tmdb.org/t/p/w185" + (data?.results[indexPath.row].posterPath)!)!)}
+            cell.moviePoster.load(url: URL(string: "https://image.tmdb.org/t/p/w500" + (data?.results[indexPath.row].posterPath)!)!)}
         return cell
     }
     
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//
-//    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        cellIndex = indexPath.row
+        performSegue(withIdentifier: Constants.segueIdentifier, sender: self)
+        
+
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! DetailsViewController
+        vc.movieDetail = data?.results[cellIndex]
+        
+    }
     
     
 }
