@@ -10,7 +10,7 @@ import Foundation
 
 struct MovieData: Codable {
     
-    let results: [Result]
+    var results: [Result]
         let page, totalResults: Int
 //        let dates: Dates
         let totalPages: Int
@@ -30,19 +30,19 @@ struct MovieData: Codable {
 
 // MARK: - Result
 struct Result: Codable {
-    let popularity: Double
-    let voteCount: Int
+    let popularity: Double?
+    let voteCount: Int?
 //    let video: Bool
     let posterPath: String?
 //    let id: Int
 //    let adult: Bool
 //    let backdropPath: String
 //    let originalLanguage: OriginalLanguage
-    let originalTitle: String
+    let originalTitle: String?
 //    let genreIDS: [Int]
-    let title: String
-    let voteAverage: Double
-    let overview, releaseDate: String
+    let title: String?
+    let voteAverage: Double?
+    let overview, releaseDate: String?
 
     enum CodingKeys: String, CodingKey {
         case popularity

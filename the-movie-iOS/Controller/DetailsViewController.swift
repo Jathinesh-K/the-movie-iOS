@@ -8,7 +8,7 @@
 import UIKit
 
 class DetailsViewController: UIViewController {
-
+    
     var movieDetail: MovieData.Result?
     
     @IBOutlet weak var titleLabel: UILabel!
@@ -21,25 +21,33 @@ class DetailsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Populate the elements with the data from ViewController
         titleLabel.text = movieDetail?.title
         if movieDetail?.posterPath != nil {
             titlePoster.load(url: URL(string: "https://image.tmdb.org/t/p/w500" + (movieDetail?.posterPath)!)!)}
         movieOverview.text = movieDetail?.overview
-        originalTitle.text = "Original Title : " + movieDetail!.originalTitle
-        userRating.text = String(movieDetail!.voteAverage) + "/10"
-        releaseYear.text = String(movieDetail!.releaseDate)
+        if let oTitle = movieDetail!.originalTitle{
+            originalTitle.text = "Original Title : " + oTitle
+        } else {
+            originalTitle.text = "TBA"
+        }
+        if let rating = movieDetail!.voteAverage {
+            userRating.text = String(rating) + "/10"
+        } else {
+            userRating.text = "TBA"
+        }
+        releaseYear.text = String(movieDetail!.releaseDate ?? "TBA")
         
-              // Do any additional setup after loading the view.
     }
     
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
 }

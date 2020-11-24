@@ -20,17 +20,26 @@ struct MovieManager {
         if let safeQuery = query{
             let finalURL = baseURL + "search/movie" + "?api_key=1f905a852b95d49aad26cde642046599&query=" + safeQuery
             
-            return performRequest(with: finalURL)
+            //Set the last used URL for pagination
+            if Constants.lastURL != finalURL {
+                Constants.lastURL = finalURL
+            }
+            
+            return performRequest(with: finalURL, page: 1)
         } else {
             let text = category ?? "now_playing"
             let finalURL = baseURL + "movie/" + text + "?api_key=1f905a852b95d49aad26cde642046599"
             
-            return performRequest(with : finalURL)
+            if Constants.lastURL != finalURL {
+                Constants.lastURL = finalURL
+            }
+            
+            return performRequest(with : finalURL, page: 1)
         }
     }
     
-    func performRequest(with urlString: String) {
-        if let url = URL(string: urlString) {
+    func performRequest(with urlString: String, page: Int) {
+        if let url = URL(string: urlString + "&page=\(page)") {
             
             let session = URLSession(configuration: .default)
             
