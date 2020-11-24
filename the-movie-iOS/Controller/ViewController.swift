@@ -39,17 +39,11 @@ class ViewController: UIViewController {
         let popular = UIAlertAction(title: "Most Popular", style: .default) {_ in
             
             self.movieManager.fetchData("popular", nil)
-            DispatchQueue.main.async {
-            self.collectionView.reloadData()
-            }
             
         }
         let topRated = UIAlertAction(title: "Top Rated", style: .default) {_ in
             
             self.movieManager.fetchData("top_rated", nil)
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -74,7 +68,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as! MovieCell
-        cell.moviePoster.image = nil
+                cell.moviePoster.image = nil
+                cell.movieTitle.text = nil
+        
         cell.movieTitle.text = data?.results[indexPath.row].title
         if data?.results[indexPath.row].posterPath != nil {
             cell.moviePoster.load(url: URL(string: "https://image.tmdb.org/t/p/w500" + (data?.results[indexPath.row].posterPath)!)!)}
@@ -85,7 +81,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         cellIndex = indexPath.row
         performSegue(withIdentifier: Constants.segueIdentifier, sender: self)
         
-
+        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -112,6 +108,7 @@ extension ViewController: MovieDelegate {
             self.data = api
             self.collectionView.reloadData()
         }
+        
     }
     
     func didFail(error: Error?) {
@@ -150,7 +147,7 @@ extension ViewController: UITextFieldDelegate {
         if textField.text != "" {
             return true
         } else {
-//            textField.placeholder = "Type something"
+            //            textField.placeholder = "Type something"
             return true
         }
     }
@@ -161,6 +158,7 @@ extension ViewController: UITextFieldDelegate {
             self.movieManager.fetchData(nil, query)
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
+                
             }
         }
         
@@ -168,3 +166,8 @@ extension ViewController: UITextFieldDelegate {
         
     }
 }
+
+
+//Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { (timer) in
+//    self.collectionView.reloadData()
+//}

@@ -84,6 +84,7 @@
 		00AD5715256C0B2E00F223D8 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				00C72FD8256D29C6008B0F2B /* DetailsViewController.swift */,
 				00AD5704256C0B2200F223D8 /* ViewController.swift */,
 			);
 			path = Controller;
@@ -95,7 +96,6 @@
 				00AD5706256C0B2200F223D8 /* Main.storyboard */,
 				00C72FCC256C584D008B0F2B /* MovieCell.swift */,
 				00C72FCD256C584D008B0F2B /* MovieCell.xib */,
-				00C72FD8256D29C6008B0F2B /* DetailsViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";

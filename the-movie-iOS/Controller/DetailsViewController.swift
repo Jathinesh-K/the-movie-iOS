@@ -13,6 +13,10 @@ class DetailsViewController: UIViewController {
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var titlePoster: UIImageView!
+    @IBOutlet weak var movieOverview: UILabel!
+    @IBOutlet weak var releaseYear: UILabel!
+    @IBOutlet weak var userRating: UILabel!
+    @IBOutlet weak var originalTitle: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +24,10 @@ class DetailsViewController: UIViewController {
         titleLabel.text = movieDetail?.title
         if movieDetail?.posterPath != nil {
             titlePoster.load(url: URL(string: "https://image.tmdb.org/t/p/w500" + (movieDetail?.posterPath)!)!)}
+        movieOverview.text = movieDetail?.overview
+        originalTitle.text = "Original Title : " + movieDetail!.originalTitle
+        userRating.text = String(movieDetail!.voteAverage) + "/10"
+        releaseYear.text = String(movieDetail!.releaseDate)
         
               // Do any additional setup after loading the view.
     }
@@ -34,21 +42,4 @@ class DetailsViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
 }
-
-//MARK: - ImageView
-
-//extension UIImageView {
-//    func load(url: URL) {
-//        DispatchQueue.global().async { [weak self] in
-//            if let data = try? Data(contentsOf: url) {
-//                if let image = UIImage(data: data) {
-//                    DispatchQueue.main.async {
-//                        self?.image = image
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
