@@ -93,7 +93,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.movieTitle.text = data[indexPath.row].title
         if data[indexPath.row].posterPath != nil {
             
-            cell.moviePoster.load(url: URL(string: "https://image.tmdb.org/t/p/w500" + (data[indexPath.row].posterPath)!)!)
+            cell.moviePoster.load(url: URL(string: Constants.baseImageURL + (data[indexPath.row].posterPath)!)!)
             
         }
         return cell
