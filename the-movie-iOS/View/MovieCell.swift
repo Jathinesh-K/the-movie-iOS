@@ -17,5 +17,9 @@ class MovieCell: UICollectionViewCell {
         super.awakeFromNib()
         // Initialization code
     }
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    moviePoster.image = nil
+  }
 
 }

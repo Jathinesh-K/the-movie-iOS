@@ -102,9 +102,6 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as! MovieCell
     
-    //Remove movie poster and title for Clean Transition
-    cell.moviePoster.image = nil
-    
     cell.movieTitle.text = data[indexPath.row].title
     guard let posterPath = data[indexPath.row].posterPath else{return cell}
     
@@ -159,12 +156,23 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
 
 //MARK: - ImageView from API
 
+//let imageCache = NSCache<AnyObject, AnyObject>()
+
 extension UIImageView {
   func load(url: URL) {
     DispatchQueue.global().async { [weak self] in
+      //ImageCache Implementation
+//      self!.image = nil
+//      if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage{
+//        self?.image = imageFromCache
+//        return
+//      }
       if let data = try? Data(contentsOf: url) {
+        
         if let image = UIImage(data: data) {
           DispatchQueue.main.async {
+//            let imageToCache = image
+//            imageCache.setObject(imageToCache, forKey: url as AnyObject)
             self?.image = image
           }
         }
