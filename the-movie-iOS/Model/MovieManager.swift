@@ -7,54 +7,44 @@
 
 import Foundation
 
-protocol MovieDelegate {
-  func didUpdate(api: MovieData)
-  func didFail(error: Error?)
-}
-
 struct MovieManager {
-  let baseURL = "https://api.themoviedb.org/3/"
-  var delegate: MovieDelegate?
   
-  func fetchData(_ category: String?, _ query: String?) {
-    if let safeQuery = query{
-      let finalURL = baseURL + "search/movie" + Constants.apiKey + "&query=" + safeQuery
+  func fetchData(_ category: String?, _ query: String?, _ completionHandler: @escaping (MovieData) -> Void) {
+    guard let safeQuery = query else{
       
+      let text = category ?? "now_playing"
+      let finalURL = Constants.baseURL + "movie/" + text + Constants.apiKey
       //Set the last used URL for pagination
       if Constants.lastURL != finalURL {
         Constants.lastURL = finalURL
       }
-      
-      return performRequest(with: finalURL, page: 1)
-    } else {
-      let text = category ?? "now_playing"
-      let finalURL = baseURL + "movie/" + text + Constants.apiKey
-      
-      if Constants.lastURL != finalURL {
-        Constants.lastURL = finalURL
-      }
-      
-      return performRequest(with : finalURL, page: 1)
+      return performRequest(with : finalURL, page: 1, completionHandler)
     }
+    
+    let finalURL = Constants.baseURL + "search/movie" + Constants.apiKey + "&query=" + safeQuery
+    if Constants.lastURL != finalURL {
+      Constants.lastURL = finalURL
+    }
+    return performRequest(with: finalURL, page: 1, completionHandler)
   }
   
-  func performRequest(with urlString: String, page: Int) {
+  func performRequest(with urlString: String, page: Int, _ completionHandler: @escaping (MovieData) -> Void) {
     if let url = URL(string: urlString + "&page=\(page)") {
       
       let session = URLSession(configuration: .default)
       
       let task = session.dataTask(with: url) { (data, response, error) in
+        
         if error != nil {
-          print(error!)
-          self.delegate?.didFail(error: error)
-          
+          print(error!.localizedDescription)
           return
         }
         
         if let safeData = data {
           
           if let decodedData = self.parseJSON(safeData) {
-            self.delegate?.didUpdate(api: decodedData)
+            
+            completionHandler(decodedData)
           }
         }
       }
@@ -63,18 +53,17 @@ struct MovieManager {
   }
   
   func parseJSON(_ apiData: Data) -> MovieData?{
+    
     let decoder = JSONDecoder()
     decoder.keyDecodingStrategy = .convertFromSnakeCase
+    
     do {
       let decodedData = try decoder.decode(MovieData.self, from: apiData)
-      
       return decodedData
     } catch {
-      self.delegate?.didFail(error: error)
       
+      print(error.localizedDescription)
       return  nil
     }
-    
-    
   }
 }

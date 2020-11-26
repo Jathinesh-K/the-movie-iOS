@@ -27,10 +27,12 @@ class ViewController: UIViewController {
     //Set delegate for Current ViewController
     collectionView.delegate = self
     collectionView.dataSource = self
-    movieManager.delegate = self
+    //    movieManager.delegate = self
     searchTextField.delegate = self
     
-    movieManager.fetchData(nil, nil)
+    movieManager.fetchData(nil, nil){ result in
+      self.didUpdate(api: result)
+    }
     
     //Register CollectionViewCell
     collectionView.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellWithReuseIdentifier: Constants.cellIdentifier)
@@ -42,28 +44,41 @@ class ViewController: UIViewController {
     totalPages = 1
     pageNo = 1
   }
+  //MARK: - Update Data
+  
+  func didUpdate(api: MovieData) {
+    DispatchQueue.main.async {
+      self.data.append(contentsOf: api.results)
+      self.totalPages = api.totalPages
+      self.collectionView.reloadData()
+    }
+  }
   
   //MARK: - Action Sheet
   
   @IBAction func sortButtonPressed(_ sender: UIButton) {
     let optionMenu = UIAlertController(title: nil, message: "Choose Sort Order", preferredStyle: .actionSheet)
     
-    //Reinitialize data for new API Call
-    
-    
     let popular = UIAlertAction(title: "Most Popular", style: .default) {_ in
       self.reinitializeData()
-      self.movieManager.fetchData("popular", nil)
+      self.movieManager.fetchData("popular", nil){ result in
+        self.didUpdate(api: result)
+      }
       
     }
+    
     let topRated = UIAlertAction(title: "Top Rated", style: .default) {_ in
       self.reinitializeData()
-      self.movieManager.fetchData("top_rated", nil)
+      self.movieManager.fetchData("top_rated", nil){ result in
+        self.didUpdate(api: result)
+      }
     }
+    
     let nowPlaying = UIAlertAction(title: "Now Playing", style: .default) {_ in
       self.reinitializeData()
-      self.movieManager.fetchData("now_playing", nil)
-      
+      self.movieManager.fetchData("now_playing", nil){ result in
+        self.didUpdate(api: result)
+      }
     }
     
     let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -74,14 +89,11 @@ class ViewController: UIViewController {
     optionMenu.addAction(cancelAction)
     
     self.present(optionMenu, animated: true, completion: nil)
-    
-    
   }
-  
 }
 
-
 //MARK: - CollectionView
+
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return data.count
@@ -113,7 +125,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     let vc = segue.destination as! DetailsViewController
     vc.movieDetail = data[cellIndex]
   }
+  
   //MARK: - Pagination
+  
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
     
     if indexPath.row == data.count - 1 {
@@ -128,13 +142,14 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     } else {
       return
     }
-    movieManager.performRequest(with: Constants.lastURL, page: pageNo)
-    //        print(Constants.lastURL + "&page=\(pageNo)")
+    movieManager.performRequest(with: Constants.lastURL, page: pageNo){ result in
+      self.didUpdate(api: result)
+    }
   }
-  
 }
 
 //MARK: - CollectionView Layout
+
 extension ViewController: UICollectionViewDelegateFlowLayout{
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     let size = CGSize(width: 180, height: 265)
@@ -142,28 +157,8 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
   }
 }
 
-
-
-
-//MARK: - Movie Delegate
-extension ViewController: MovieDelegate {
-  func didUpdate(api: MovieData) {
-    DispatchQueue.main.async {
-      self.data.append(contentsOf: api.results)
-      self.totalPages = api.totalPages
-      self.collectionView.reloadData()
-    }
-    
-  }
-  
-  func didFail(error: Error?) {
-    print(error!)
-  }
-  
-  
-}
-
 //MARK: - ImageView from API
+
 extension UIImageView {
   func load(url: URL) {
     DispatchQueue.global().async { [weak self] in
@@ -181,7 +176,6 @@ extension UIImageView {
 //MARK: - SearchTextField
 
 extension ViewController: UITextFieldDelegate {
-  
   
   func textFieldShouldReturn(_ textField: UITextField) -> Bool {
     searchTextField.endEditing(true)
@@ -201,14 +195,15 @@ extension ViewController: UITextFieldDelegate {
     
     if let query = searchTextField.text {
       self.reinitializeData()
-      self.movieManager.fetchData(nil, query)
+      self.movieManager.fetchData(nil, query){ result in
+        self.didUpdate(api: result)
+      }
+      
       DispatchQueue.main.async {
         self.collectionView.reloadData()
-        
       }
     }
     
     searchTextField.text = ""
-    
   }
 }

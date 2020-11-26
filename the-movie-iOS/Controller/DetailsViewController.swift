@@ -23,22 +23,20 @@ class DetailsViewController: UIViewController {
     
     
     guard let movieDetail = movieDetail else{return}
+    
     //Populate the elements with the data from ViewController
     titleLabel.text = movieDetail.title
     guard let posterPath = movieDetail.posterPath else{return}
-    
     titlePoster.load(url: URL(string: Constants.baseImageURL + posterPath)!)
     movieOverview.text = movieDetail.overview
-    if let oTitle = movieDetail.originalTitle{
-      originalTitle.text = "Original Title : " + oTitle
-    } else {
-      originalTitle.text = "TBA"
+    guard let oTitle = movieDetail.originalTitle else {
+      return originalTitle.text = "TBA"
     }
-    if let rating = movieDetail.voteAverage {
-      userRating.text = String(rating) + "/10"
-    } else {
-      userRating.text = "TBA"
+    originalTitle.text = "Original Title : " + oTitle
+    guard let rating = movieDetail.voteAverage else {
+      return userRating.text = "TBA"
     }
+    userRating.text = String(rating) + "/10"
     releaseYear.text = String(movieDetail.releaseDate ?? "TBA")
     
   }
