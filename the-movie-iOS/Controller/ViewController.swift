@@ -30,8 +30,8 @@ class ViewController: UIViewController {
     //    movieManager.delegate = self
     searchTextField.delegate = self
     
-    movieManager.fetchData(nil, nil){ result in
-      self.didUpdate(api: result)
+    movieManager.fetchData(nil, nil) { result in
+      self.didUpdate(result)
     }
     
     //Register CollectionViewCell
@@ -44,15 +44,6 @@ class ViewController: UIViewController {
     totalPages = 1
     pageNo = 1
   }
-  //MARK: - Update Data
-  
-  func didUpdate(api: MovieData) {
-    DispatchQueue.main.async {
-      self.data.append(contentsOf: api.results)
-      self.totalPages = api.totalPages
-      self.collectionView.reloadData()
-    }
-  }
   
   //MARK: - Action Sheet
   
@@ -62,7 +53,7 @@ class ViewController: UIViewController {
     let popular = UIAlertAction(title: "Most Popular", style: .default) {_ in
       self.reinitializeData()
       self.movieManager.fetchData("popular", nil){ result in
-        self.didUpdate(api: result)
+        self.didUpdate(result)
       }
       
     }
@@ -70,14 +61,14 @@ class ViewController: UIViewController {
     let topRated = UIAlertAction(title: "Top Rated", style: .default) {_ in
       self.reinitializeData()
       self.movieManager.fetchData("top_rated", nil){ result in
-        self.didUpdate(api: result)
+        self.didUpdate(result)
       }
     }
     
     let nowPlaying = UIAlertAction(title: "Now Playing", style: .default) {_ in
       self.reinitializeData()
       self.movieManager.fetchData("now_playing", nil){ result in
-        self.didUpdate(api: result)
+        self.didUpdate(result)
       }
     }
     
@@ -90,8 +81,24 @@ class ViewController: UIViewController {
     
     self.present(optionMenu, animated: true, completion: nil)
   }
+  
+  //MARK: - Update Data
+  
+  func didUpdate(_ result: (Result<MovieData, someError>)) {
+    switch result{
+    case .success(let apiData, let statusCode):
+      if statusCode == 200 {
+        DispatchQueue.main.async {
+          self.data.append(contentsOf: apiData.results)
+          self.totalPages = apiData.totalPages
+          self.collectionView.reloadData()
+        }
+      }
+    case .failure(let error, _):
+      print(error.localizedDescription)
+    }
+  }
 }
-
 //MARK: - CollectionView
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -140,7 +147,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
       return
     }
     movieManager.performRequest(with: Constants.lastURL, page: pageNo){ result in
-      self.didUpdate(api: result)
+      self.didUpdate(result)
     }
   }
 }
@@ -162,17 +169,17 @@ extension UIImageView {
   func load(url: URL) {
     DispatchQueue.global().async { [weak self] in
       //ImageCache Implementation
-//      self!.image = nil
-//      if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage{
-//        self?.image = imageFromCache
-//        return
-//      }
+      //      self!.image = nil
+      //      if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage{
+      //        self?.image = imageFromCache
+      //        return
+      //      }
       if let data = try? Data(contentsOf: url) {
         
         if let image = UIImage(data: data) {
           DispatchQueue.main.async {
-//            let imageToCache = image
-//            imageCache.setObject(imageToCache, forKey: url as AnyObject)
+            //            let imageToCache = image
+            //            imageCache.setObject(imageToCache, forKey: url as AnyObject)
             self?.image = image
           }
         }
@@ -204,7 +211,7 @@ extension ViewController: UITextFieldDelegate {
     if let query = searchTextField.text {
       self.reinitializeData()
       self.movieManager.fetchData(nil, query){ result in
-        self.didUpdate(api: result)
+        self.didUpdate(result)
       }
       
       DispatchQueue.main.async {

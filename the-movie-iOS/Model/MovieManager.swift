@@ -7,9 +7,20 @@
 
 import Foundation
 
+enum someError: Error {
+    case httpError(code: String)
+    case noData
+    case other
+}
+
+enum Result<T, someError> {
+    case success(T, Int?)
+    case failure(someError, Int?)
+}
+
 struct MovieManager {
   
-  func fetchData(_ category: String?, _ query: String?, _ completionHandler: @escaping (MovieData) -> Void) {
+  func fetchData(_ category: String?, _ query: String?, _ completionHandler: @escaping (Result<MovieData, someError>) -> Void) {
     guard let safeQuery = query else{
       
       let text = category ?? "now_playing"
@@ -28,24 +39,27 @@ struct MovieManager {
     return performRequest(with: finalURL, page: 1, completionHandler)
   }
   
-  func performRequest(with urlString: String, page: Int, _ completionHandler: @escaping (MovieData) -> Void) {
+  func performRequest(with urlString: String, page: Int, _ completionHandler: @escaping (Result<MovieData, someError>) -> Void) {
     if let url = URL(string: urlString + "&page=\(page)") {
       
       let session = URLSession(configuration: .default)
       
       let task = session.dataTask(with: url) { (data, response, error) in
         
-        if error != nil {
-          print(error!.localizedDescription)
-          return
+        guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {return}
+        
+        if let _ = error {
+            completionHandler(.failure(.other, statusCode))
+            return
         }
         
-        if let safeData = data {
-          
+        guard let safeData = data, !safeData.isEmpty else {
+            completionHandler(.failure(.noData, statusCode))
+            return
+        }
+        
           if let decodedData = self.parseJSON(safeData) {
-            
-            completionHandler(decodedData)
-          }
+            completionHandler(.success(decodedData, statusCode))
         }
       }
       task.resume()
@@ -61,7 +75,6 @@ struct MovieManager {
       let decodedData = try decoder.decode(MovieData.self, from: apiData)
       return decodedData
     } catch {
-      
       print(error.localizedDescription)
       return  nil
     }
