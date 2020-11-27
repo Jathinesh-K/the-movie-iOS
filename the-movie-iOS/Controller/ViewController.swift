@@ -93,7 +93,7 @@ class ViewController: UIViewController {
           self.totalPages = apiData.totalPages
           self.collectionView.reloadData()
         }
-      } else if statusCode == 400 {
+      } else if statusCode == 404 {
         print("Page does not exist!")
       }
     case .failure(let error, _):
