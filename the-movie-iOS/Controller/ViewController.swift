@@ -98,7 +98,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as! MovieCell
     cell.movieTitle.text = data[indexPath.row].title
     guard let posterPath = data[indexPath.row].posterPath else{return cell}
+//    cell.moviePoster.tag = indexPath.row
     cell.moviePoster.load(url: URL(string: Constants.baseImageURL + posterPath)!)
+//    cell.moviePoster.image = UIImage(systemName: "sun.max")
     return cell
   }
   
@@ -134,7 +136,9 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
 extension ViewController: UICollectionViewDelegateFlowLayout{
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    let size = CGSize(width: 180, height: 265)
+    let width = (view.frame.width - 20)/2
+    let height = (view.frame.height-20)/3
+    let size = CGSize(width: width, height: height)
     return size
   }
 }
@@ -144,17 +148,17 @@ extension ViewController: UICollectionViewDelegateFlowLayout{
 extension UIImageView {
   func load(url: URL) {
     DispatchQueue.global().async { [weak self] in
-      //ImageCache Implementation
-      //            self!.image = nil
-      //      if let imageFromCache = imageCache.object(forKey: url.absoluteString as NSString) {
-      //              self?.image = imageFromCache
-      //              return
-      //            }
+//      ImageCache Implementation
+//      self!.image = nil
+//      if let imageFromCache = imageCache.object(forKey: url.absoluteString as NSString) {
+//        self?.image = imageFromCache
+//        return
+//      }
       if let data = try? Data(contentsOf: url) {
         if let image = UIImage(data: data) {
           DispatchQueue.main.async {
-            //                        let imageToCache = image
-            //            imageCache.setObject(imageToCache, forKey: url.absoluteString as NSString)
+//            let imageToCache = image
+//            imageCache.setObject(imageToCache, forKey: url.absoluteString as NSString)
             self?.image = image
           }
         }
