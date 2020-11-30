@@ -17,8 +17,8 @@ class MovieCell: UICollectionViewCell {
     // Initialization code
   }
   
-//  override func prepareForReuse() {
-//    super.prepareForReuse()
-//    moviePoster.image = nil
-//  }
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    moviePoster.image = nil
+  }
 }

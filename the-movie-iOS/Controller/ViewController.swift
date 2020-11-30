@@ -26,7 +26,8 @@ class ViewController: UIViewController {
     collectionView.dataSource = self
     searchTextField.delegate = self
     
-    movieManager.fetchData(nil, nil) { result in
+    let lastSortOrder = UserDefaults.standard.string(forKey: "Last Sort Order")
+    movieManager.fetchData(lastSortOrder, nil) { result in
       self.didUpdate(result)
     }
     collectionView.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellWithReuseIdentifier: Constants.cellIdentifier)
@@ -42,18 +43,21 @@ class ViewController: UIViewController {
   @IBAction func sortButtonPressed(_ sender: UIButton) {
     let optionMenu = UIAlertController(title: nil, message: "Choose Sort Order", preferredStyle: .actionSheet)
     let popular = UIAlertAction(title: "Most Popular", style: .default) {_ in
+      UserDefaults.standard.setValue("popular", forKey: "Last Sort Order")
       self.reinitializeData()
       self.movieManager.fetchData("popular", nil){ result in
         self.didUpdate(result)
       }
     }
     let topRated = UIAlertAction(title: "Top Rated", style: .default) {_ in
+      UserDefaults.standard.setValue("top_rated", forKey: "Last Sort Order")
       self.reinitializeData()
       self.movieManager.fetchData("top_rated", nil){ result in
         self.didUpdate(result)
       }
     }
     let nowPlaying = UIAlertAction(title: "Now Playing", style: .default) {_ in
+      UserDefaults.standard.setValue("now_playing", forKey: "Last Sort Order")
       self.reinitializeData()
       self.movieManager.fetchData("now_playing", nil){ result in
         self.didUpdate(result)
@@ -126,14 +130,14 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     } else {
       return
     }
-    movieManager.performRequest(with: Constants.lastURL, page: pageNo){ result in
+    movieManager.performRequest(with: Constants.lastURL, page: pageNo) { result in
       self.didUpdate(result)
     }
   }
 }
 //MARK: - CollectionView Layout
 
-extension ViewController: UICollectionViewDelegateFlowLayout{
+extension ViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.5)
   }
@@ -145,17 +149,19 @@ extension UIImageView {
   func load(url: URL) {
     DispatchQueue.global().async { [weak self] in
       //ImageCache Implementation
-      self!.image = nil
-      if let imageFromCache = imageCache.object(forKey: url.absoluteString as NSString) {
-        self?.image = imageFromCache
-        return
+      DispatchQueue.main.async {
+        self!.image = nil
+        if let imageFromCache = imageCache.object(forKey: url.absoluteString as NSString) {
+          self!.image = imageFromCache
+          return
+        }
       }
       if let data = try? Data(contentsOf: url) {
         if let image = UIImage(data: data) {
           DispatchQueue.main.async {
             let imageToCache = image
             imageCache.setObject(imageToCache, forKey: url.absoluteString as NSString)
-            self?.image = image
+            self!.image = image
           }
         }
       }
