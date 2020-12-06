@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ViewController: UIViewController {
   @IBOutlet weak var collectionView: UICollectionView!
@@ -103,7 +104,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     cell.movieTitle.text = data[indexPath.row].title
     guard let posterPath = data[indexPath.row].posterPath else{return cell}
     cell.moviePoster.tag = indexPath.row
-    cell.moviePoster.load(url: URL(string: Constants.baseImageURL + posterPath)!)
+    cell.moviePoster.kf.indicatorType = .activity
+    cell.moviePoster.kf.setImage(with: URL(string: Constants.baseImageURL + posterPath))
     return cell
   }
   
@@ -140,32 +142,6 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 extension ViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
     return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.5)
-  }
-}
-//MARK: - ImageView from API
-
-let imageCache = NSCache<NSString, UIImage>()
-extension UIImageView {
-  func load(url: URL) {
-    DispatchQueue.global().async { [weak self] in
-      //ImageCache Implementation
-      DispatchQueue.main.async {
-        self!.image = nil
-        if let imageFromCache = imageCache.object(forKey: url.absoluteString as NSString) {
-          self!.image = imageFromCache
-          return
-        }
-      }
-      if let data = try? Data(contentsOf: url) {
-        if let image = UIImage(data: data) {
-          DispatchQueue.main.async {
-            let imageToCache = image
-            imageCache.setObject(imageToCache, forKey: url.absoluteString as NSString)
-            self!.image = image
-          }
-        }
-      }
-    }
   }
 }
 //MARK: - SearchTextField

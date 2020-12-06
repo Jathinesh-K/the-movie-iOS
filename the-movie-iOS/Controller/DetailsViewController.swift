@@ -28,7 +28,8 @@ class DetailsViewController: UIViewController {
     titleLabel.text = movieDetail.title
     releaseYear.text = String(movieDetail.releaseDate ?? "TBA")
     guard let posterPath = movieDetail.posterPath else{return}
-    titlePoster.load(url: URL(string: Constants.baseImageURL + posterPath)!)
+    titlePoster.kf.indicatorType = .activity
+    titlePoster.kf.setImage(with: URL(string: Constants.baseImageURL + posterPath))
     guard let oTitle = movieDetail.originalTitle else {
       return originalTitle.text = "TBA"
     }
