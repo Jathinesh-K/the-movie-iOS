@@ -16,9 +16,11 @@ class DetailsViewController: UIViewController {
   @IBOutlet weak var releaseYear: UILabel!
   @IBOutlet weak var userRating: UILabel!
   @IBOutlet weak var originalTitle: UILabel!
+  @IBOutlet weak var scrollView: UIScrollView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    scrollView.delegate = self
     guard let movieDetail = movieDetail else{return}
     
     //Populate the elements with the data from ViewController
@@ -35,5 +37,11 @@ class DetailsViewController: UIViewController {
       return userRating.text = "TBA"
     }
     userRating.text = String(rating) + "/10"
+  }
+}
+
+extension DetailsViewController: UIScrollViewDelegate {
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    scrollView.contentOffset.x = 0
   }
 }
