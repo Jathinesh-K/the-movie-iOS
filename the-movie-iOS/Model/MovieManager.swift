@@ -23,6 +23,9 @@ struct MovieManager {
   func fetchData(_ category: String?, _ query: String?, _ completionHandler: @escaping (Result<MovieData, someError>) -> Void) {
     guard let safeQuery = query else{
       let text = category ?? "now_playing"
+      if text == "now_playing" {
+        UserDefaults.standard.setValue("Now Playing", forKey: "Sort Order Label")
+      }
       let finalURL = Constants.baseURL + "movie/" + text + Constants.apiKey
       //Set the last used URL for pagination
       if Constants.lastURL != finalURL {

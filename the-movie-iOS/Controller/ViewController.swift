@@ -11,13 +11,14 @@ import Kingfisher
 class ViewController: UIViewController {
   @IBOutlet weak var collectionView: UICollectionView!
   @IBOutlet weak var sortOrderButton: UIButton!
-  @IBOutlet weak var searchTextField: UITextField!
+  @IBOutlet weak var SortOrderLabel: UILabel!
   
   var cellIndex = 0
   var pageNo: Int = 1
   var totalPages: Int = 1
   var movieManager = MovieManager()
   var data = [MovieData.Result]()
+  let searchController = UISearchController(searchResultsController: nil)
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -25,7 +26,11 @@ class ViewController: UIViewController {
     //Set delegate for Current ViewController
     collectionView.delegate = self
     collectionView.dataSource = self
-    searchTextField.delegate = self
+    navigationItem.searchController = searchController
+    searchController.searchResultsUpdater = self
+    searchController.searchBar.delegate = self
+    navigationItem.hidesSearchBarWhenScrolling = false
+    
     
     let lastSortOrder = UserDefaults.standard.string(forKey: "Last Sort Order")
     apiCaller(lastSortOrder, nil)
@@ -44,16 +49,19 @@ class ViewController: UIViewController {
     let optionMenu = UIAlertController(title: nil, message: "Choose Sort Order", preferredStyle: .actionSheet)
     let popular = UIAlertAction(title: "Most Popular", style: .default) {_ in
       UserDefaults.standard.setValue("popular", forKey: "Last Sort Order")
+      UserDefaults.standard.setValue("Most Popular", forKey: "Sort Order Label")
       self.reinitializeData()
       self.apiCaller("popular", nil)
     }
     let topRated = UIAlertAction(title: "Top Rated", style: .default) {_ in
       UserDefaults.standard.setValue("top_rated", forKey: "Last Sort Order")
+      UserDefaults.standard.setValue("Top Rated", forKey: "Sort Order Label")
       self.reinitializeData()
       self.apiCaller("top_rated", nil)
     }
     let nowPlaying = UIAlertAction(title: "Now Playing", style: .default) {_ in
       UserDefaults.standard.setValue("now_playing", forKey: "Last Sort Order")
+      UserDefaults.standard.setValue("Now Playing", forKey: "Sort Order Label")
       self.reinitializeData()
       self.apiCaller("now_playing", nil)
     }
@@ -79,8 +87,9 @@ class ViewController: UIViewController {
       }
       self.didUpdate(result)
     }
+    SortOrderLabel.text = UserDefaults.standard.string(forKey: "Sort Order Label")
   }
-  //MARK: - Data Update
+  //MARK: - Update Data
   
   func didUpdate(_ result: (Result<MovieData, someError>)) {
     switch result{
@@ -167,27 +176,26 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.5)
   }
 }
-//MARK: - SearchTextField
+//MARK: - SearchBar
 
-extension ViewController: UITextFieldDelegate {
-  func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-    searchTextField.endEditing(true)
-    return true
+extension ViewController: UISearchBarDelegate, UISearchResultsUpdating {
+  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    print(searchText)
   }
   
-  func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-    if textField.text != "" {
-      return true
-    } else {
-      return false
-    }
+  func updateSearchResults(for searchController: UISearchController) {
+    
   }
-  //Implementing search API
-  func textFieldDidEndEditing(_ textField: UITextField) {
-    if let query = searchTextField.text {
-      self.reinitializeData()
-      self.apiCaller(nil, query)
-    }
-    searchTextField.text = ""
+  
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    
+  }
+  
+  func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    
+  }
+  
+  func filterCurrentDataSource(searchTerm: String) {
+    
   }
 }
