@@ -16,9 +16,9 @@ class ViewController: UIViewController {
   var cellIndex = 0
   var pageNo: Int = 1
   var totalPages: Int = 1
-  
   var movieManager = MovieManager()
   var data = [MovieData.Result]()
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     title = Constants.appName
@@ -28,9 +28,7 @@ class ViewController: UIViewController {
     searchTextField.delegate = self
     
     let lastSortOrder = UserDefaults.standard.string(forKey: "Last Sort Order")
-    movieManager.fetchData(lastSortOrder, nil) { result in
-      self.didUpdate(result)
-    }
+    apiCaller(lastSortOrder, nil)
     collectionView.register(UINib(nibName: Constants.cellNibName, bundle: nil), forCellWithReuseIdentifier: Constants.cellIdentifier)
   }
   
@@ -38,6 +36,7 @@ class ViewController: UIViewController {
     data = []
     totalPages = 1
     pageNo = 1
+    //    collectionView.reloadData()
   }
   //MARK: - Action Sheet
   
@@ -46,23 +45,17 @@ class ViewController: UIViewController {
     let popular = UIAlertAction(title: "Most Popular", style: .default) {_ in
       UserDefaults.standard.setValue("popular", forKey: "Last Sort Order")
       self.reinitializeData()
-      self.movieManager.fetchData("popular", nil){ result in
-        self.didUpdate(result)
-      }
+      self.apiCaller("popular", nil)
     }
     let topRated = UIAlertAction(title: "Top Rated", style: .default) {_ in
       UserDefaults.standard.setValue("top_rated", forKey: "Last Sort Order")
       self.reinitializeData()
-      self.movieManager.fetchData("top_rated", nil){ result in
-        self.didUpdate(result)
-      }
+      self.apiCaller("top_rated", nil)
     }
     let nowPlaying = UIAlertAction(title: "Now Playing", style: .default) {_ in
       UserDefaults.standard.setValue("now_playing", forKey: "Last Sort Order")
       self.reinitializeData()
-      self.movieManager.fetchData("now_playing", nil){ result in
-        self.didUpdate(result)
-      }
+      self.apiCaller("now_playing", nil)
     }
     let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
     
@@ -73,16 +66,40 @@ class ViewController: UIViewController {
     
     self.present(optionMenu, animated: true, completion: nil)
   }
-  //MARK: - Update Data
+  
+  func apiCaller(_ category: String?, _ query: String?) {
+    let activityIndicator = UIActivityIndicatorView(style: .medium)
+    activityIndicator.center = view.center
+    view.addSubview(activityIndicator)
+    activityIndicator.hidesWhenStopped = true
+    activityIndicator.startAnimating()
+    movieManager.fetchData(category, query) { (result) in
+      DispatchQueue.main.async {
+        activityIndicator.stopAnimating()
+      }
+      self.didUpdate(result)
+    }
+  }
+  //MARK: - Data Update
   
   func didUpdate(_ result: (Result<MovieData, someError>)) {
     switch result{
     case .success(let apiData, let statusCode):
       if statusCode == 200 {
-        DispatchQueue.main.async {
-          self.data.append(contentsOf: apiData.results)
-          self.totalPages = apiData.totalPages
-          self.collectionView.reloadData()
+        let lastIndex = self.data.count
+        self.data.append(contentsOf: apiData.results)
+        self.totalPages = apiData.totalPages
+        if pageNo == 1 {
+          DispatchQueue.main.async {
+            self.collectionView.reloadData()
+          }
+        } else {
+          let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
+//          print(indexPath)
+          DispatchQueue.main.async {
+            self.collectionView.insertItems(at: indexPath)
+            self.collectionView.reloadItems(at: indexPath)
+          }
         }
       } else if statusCode == 404 {
         print("Page does not exist!")
@@ -111,28 +128,34 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     cellIndex = indexPath.row
-    performSegue(withIdentifier: Constants.segueIdentifier, sender: self)
-  }
-  
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-    let vc = segue.destination as! DetailsViewController
-    vc.movieDetail = data[cellIndex]
+    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    let detailsViewController = storyboard.instantiateViewController(identifier: Constants.detailsViewController) as! DetailsViewController
+    detailsViewController.movieDetail = data[cellIndex]
+    self.navigationController?.pushViewController(detailsViewController, animated: true)
   }
   //MARK: - Pagination
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    if indexPath.row == data.count - 1 {
+    if indexPath.row == data.count - 1{
       updateNextSet()
     }
   }
   
   func updateNextSet() {
-    if pageNo <= totalPages {
+    if pageNo < totalPages {
       pageNo += 1
     } else {
       return
     }
-    movieManager.performRequest(with: Constants.lastURL, page: pageNo) { result in
+    let activityIndicator = UIActivityIndicatorView(style: .medium)
+    activityIndicator.center = view.center
+    view.addSubview(activityIndicator)
+    activityIndicator.hidesWhenStopped = true
+    activityIndicator.startAnimating()
+    self.movieManager.performRequest(with: Constants.lastURL, page: self.pageNo) { result in
+      DispatchQueue.main.async {
+        activityIndicator.stopAnimating()
+      }
       self.didUpdate(result)
     }
   }
@@ -163,12 +186,7 @@ extension ViewController: UITextFieldDelegate {
   func textFieldDidEndEditing(_ textField: UITextField) {
     if let query = searchTextField.text {
       self.reinitializeData()
-      self.movieManager.fetchData(nil, query){ result in
-        self.didUpdate(result)
-      }
-      DispatchQueue.main.async {
-        self.collectionView.reloadData()
-      }
+      self.apiCaller(nil, query)
     }
     searchTextField.text = ""
   }

@@ -84,7 +84,6 @@
                         <outlet property="collectionView" destination="qDs-si-GYc" id="BsQ-JC-D3E"/>
                         <outlet property="searchTextField" destination="muJ-Iq-DzT" id="sgT-0Q-3TA"/>
                         <outlet property="sortOrderButton" destination="yjc-rM-cYA" id="tOX-rV-Erg"/>
-                        <segue destination="9Sa-fx-Ndk" kind="show" identifier="showDetail" id="UEE-75-iMg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -94,7 +93,7 @@
         <!--Details View Controller-->
         <scene sceneID="3dp-qB-j4C">
             <objects>
-                <viewController id="9Sa-fx-Ndk" customClass="DetailsViewController" customModule="the_movie_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController restorationIdentifier="DetailsViewController" storyboardIdentifier="DetailsViewController" id="9Sa-fx-Ndk" customClass="DetailsViewController" customModule="the_movie_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="wlT-Fx-mLW">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
