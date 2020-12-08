@@ -76,9 +76,8 @@ class ViewController: UIViewController {
     movieManager.fetchData(category, query) { (result) in
       DispatchQueue.main.async {
         activityIndicator.stopAnimating()
-        self.didUpdate(result)
       }
-      
+      self.didUpdate(result)
     }
   }
   //MARK: - Data Update
@@ -91,12 +90,16 @@ class ViewController: UIViewController {
         self.data.append(contentsOf: apiData.results)
         self.totalPages = apiData.totalPages
         if pageNo == 1 {
+          DispatchQueue.main.async {
             self.collectionView.reloadData()
+          }
         } else {
           let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
 //          print(indexPath)
+          DispatchQueue.main.async {
             self.collectionView.insertItems(at: indexPath)
-//            self.collectionView.reloadItems(at: indexPath)
+            self.collectionView.reloadItems(at: indexPath)
+          }
         }
       } else if statusCode == 404 {
         print("Page does not exist!")
