@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00101434257F869600C66CC8 /* RecentSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00101433257F869600C66CC8 /* RecentSearchViewController.swift */; };
 		0067EFC72574362A00AF119B /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0067EFC52574362A00AF119B /* MovieCell.swift */; };
 		0067EFC82574362A00AF119B /* MovieCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0067EFC62574362A00AF119B /* MovieCell.xib */; };
 		00AD5701256C0B2200F223D8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00AD5700256C0B2200F223D8 /* AppDelegate.swift */; };
@@ -23,6 +24,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		00101433257F869600C66CC8 /* RecentSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchViewController.swift; sourceTree = "<group>"; };
 		0067EFC52574362A00AF119B /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
 		0067EFC62574362A00AF119B /* MovieCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MovieCell.xib; sourceTree = "<group>"; };
 		00AD56FD256C0B2200F223D8 /* the-movie-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "the-movie-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,6 +95,7 @@
 			children = (
 				00C72FD8256D29C6008B0F2B /* DetailsViewController.swift */,
 				00AD5704256C0B2200F223D8 /* ViewController.swift */,
+				00101433257F869600C66CC8 /* RecentSearchViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -130,7 +133,6 @@
 				C99B1E206283FC89BDDA615B /* Pods-the-movie-iOS.debug.xcconfig */,
 				483B7411A28050825CF6B166 /* Pods-the-movie-iOS.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -253,6 +255,7 @@
 				00AD5705256C0B2200F223D8 /* ViewController.swift in Sources */,
 				0067EFC72574362A00AF119B /* MovieCell.swift in Sources */,
 				00C72FD9256D29C6008B0F2B /* DetailsViewController.swift in Sources */,
+				00101434257F869600C66CC8 /* RecentSearchViewController.swift in Sources */,
 				00AD5701256C0B2200F223D8 /* AppDelegate.swift in Sources */,
 				00C72FD2256C5B8E008B0F2B /* Constants.swift in Sources */,
 				00C72FC9256C10F9008B0F2B /* MovieData.swift in Sources */,

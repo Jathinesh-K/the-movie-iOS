@@ -23,14 +23,13 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     title = Constants.appName
-    //Set delegate for Current ViewController
     collectionView.delegate = self
     collectionView.dataSource = self
     navigationItem.searchController = searchController
-//    searchController.searchResultsUpdater = self
     searchController.searchBar.delegate = self
+    searchController.obscuresBackgroundDuringPresentation = false
     navigationItem.hidesSearchBarWhenScrolling = false
-    
+    searchController.searchBar.showsSearchResultsButton = true
     
     let lastSortOrder = UserDefaults.standard.string(forKey: "Last Sort Order")
     apiCaller(lastSortOrder, nil)
@@ -41,7 +40,6 @@ class ViewController: UIViewController {
     data = []
     totalPages = 1
     pageNo = 1
-    //    collectionView.reloadData()
   }
   //MARK: - Action Sheet
   
@@ -177,26 +175,23 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
 
 extension ViewController: UISearchBarDelegate {
   func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-    if let query = searchBar.text {
-      self.reinitializeData()
-      self.apiCaller(nil, query)
-      self.SortOrderLabel.text = "Search Results: \(query)"
+    guard let query = searchBar.text else {return}
+    if query == "" {
+      return
     }
+    self.reinitializeData()
+    self.apiCaller(nil, query)
+    self.SortOrderLabel.text = "Search Results: \(query)"
     searchBar.text = ""
     searchBar.endEditing(true)
     searchController.isActive = false
   }
-  func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
-    print(#function)
-    if searchBar.text != "" {
-      return true
-    } else {
-      return false
-    }
-  }
   
   func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
     print(#function)
+    //    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    //    guard let recentSearchViewController = storyboard.instantiateViewController(identifier: Constants.RecentSearchViewController) as? RecentSearchViewController else {return true}
+    //    self.navigationController?.pushViewController(recentSearchViewController, animated: true)
     return true
   }
 }
