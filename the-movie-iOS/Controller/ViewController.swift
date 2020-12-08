@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 import Kingfisher
 
 class ViewController: UIViewController {
@@ -19,9 +20,11 @@ class ViewController: UIViewController {
   var movieManager = MovieManager()
   var data = [MovieData.Result]()
   let searchController = UISearchController(searchResultsController: nil)
+  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     title = Constants.appName
     collectionView.delegate = self
     collectionView.dataSource = self
@@ -193,6 +196,9 @@ extension ViewController: UISearchBarDelegate {
     if query == "" {
       return
     }
+    let newRecentSearch = RecentSearch(context: context)
+    newRecentSearch.item = query
+    saveItem()
     self.reinitializeData()
     self.apiCaller(nil, query)
     self.SortOrderLabel.text = "Search Results: \(query)"
@@ -207,5 +213,13 @@ extension ViewController: UISearchBarDelegate {
     //    guard let recentSearchViewController = storyboard.instantiateViewController(identifier: Constants.RecentSearchViewController) as? RecentSearchViewController else {return true}
     //    self.navigationController?.pushViewController(recentSearchViewController, animated: true)
     return true
+  }
+  
+  func saveItem() {
+    do {
+      try context.save()
+    } catch {
+      print("Error saving Item \(error)")
+    }
   }
 }
