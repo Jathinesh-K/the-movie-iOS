@@ -74,6 +74,7 @@ class ViewController: UIViewController {
     
     self.present(optionMenu, animated: true, completion: nil)
   }
+  //MARK: - API Call
   
   func apiCaller(_ category: String?, _ query: String?) {
     let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -95,20 +96,12 @@ class ViewController: UIViewController {
     switch result{
     case .success(let apiData, let statusCode):
       if statusCode == 200 {
-        let lastIndex = self.data.count
-        self.data.append(contentsOf: apiData.results)
-        self.totalPages = apiData.totalPages
-        if pageNo == 1 {
-          DispatchQueue.main.async {
-            self.collectionView.reloadData()
-          }
-        } else {
+        DispatchQueue.main.async {
+          let lastIndex = self.data.count
+          self.data.append(contentsOf: apiData.results)
+          self.totalPages = apiData.totalPages
           let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
-//          print(indexPath)
-          DispatchQueue.main.async {
-            self.collectionView.insertItems(at: indexPath)
-            self.collectionView.reloadItems(at: indexPath)
-          }
+          self.collectionView.insertItems(at: indexPath)
         }
       } else if statusCode == 404 {
         print("Page does not exist!")
