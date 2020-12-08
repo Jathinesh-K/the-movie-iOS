@@ -27,7 +27,7 @@ class ViewController: UIViewController {
     collectionView.delegate = self
     collectionView.dataSource = self
     navigationItem.searchController = searchController
-    searchController.searchResultsUpdater = self
+//    searchController.searchResultsUpdater = self
     searchController.searchBar.delegate = self
     navigationItem.hidesSearchBarWhenScrolling = false
     
@@ -100,8 +100,12 @@ class ViewController: UIViewController {
           let lastIndex = self.data.count
           self.data.append(contentsOf: apiData.results)
           self.totalPages = apiData.totalPages
-          let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
-          self.collectionView.insertItems(at: indexPath)
+          if self.pageNo == 1 {
+            self.collectionView.reloadData()
+          } else {
+            let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
+            self.collectionView.insertItems(at: indexPath)
+          }
         }
       } else if statusCode == 404 {
         print("Page does not exist!")
@@ -171,19 +175,14 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
 }
 //MARK: - SearchBar
 
-extension ViewController: UISearchBarDelegate, UISearchResultsUpdating {
-//  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//    print(searchText)
-//  }
-  
+extension ViewController: UISearchBarDelegate {
   func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
-    print(#function)
     if let query = searchBar.text {
-          self.reinitializeData()
-          self.apiCaller(nil, query)
+      self.reinitializeData()
+      self.apiCaller(nil, query)
       self.SortOrderLabel.text = "Search Results: \(query)"
-        }
-        searchBar.text = ""
+    }
+    searchBar.text = ""
     searchBar.endEditing(true)
     searchController.isActive = false
   }
@@ -192,7 +191,6 @@ extension ViewController: UISearchBarDelegate, UISearchResultsUpdating {
     if searchBar.text != "" {
       return true
     } else {
-      searchBar.resignFirstResponder()
       return false
     }
   }
@@ -200,21 +198,5 @@ extension ViewController: UISearchBarDelegate, UISearchResultsUpdating {
   func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
     print(#function)
     return true
-  }
-  
-  func updateSearchResults(for searchController: UISearchController) {
-    
-  }
-  
-  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    
-  }
-  
-  func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-    
-  }
-  
-  func filterCurrentDataSource(searchTerm: String) {
-    
   }
 }
