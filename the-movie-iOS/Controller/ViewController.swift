@@ -119,7 +119,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as! MovieCell
+    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as? MovieCell else {return MovieCell()}
     cell.movieTitle.text = data[indexPath.row].title
     guard let posterPath = data[indexPath.row].posterPath else{return cell}
     cell.moviePoster.tag = indexPath.row
@@ -131,7 +131,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     cellIndex = indexPath.row
     let storyboard = UIStoryboard(name: "Main", bundle: nil)
-    let detailsViewController = storyboard.instantiateViewController(identifier: Constants.detailsViewController) as! DetailsViewController
+    guard let detailsViewController = storyboard.instantiateViewController(identifier: Constants.detailsViewController) as? DetailsViewController else {return}
     detailsViewController.movieDetail = data[cellIndex]
     self.navigationController?.pushViewController(detailsViewController, animated: true)
   }
@@ -172,8 +172,34 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - SearchBar
 
 extension ViewController: UISearchBarDelegate, UISearchResultsUpdating {
-  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-    print(searchText)
+//  func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//    print(searchText)
+//  }
+  
+  func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    print(#function)
+    if let query = searchBar.text {
+          self.reinitializeData()
+          self.apiCaller(nil, query)
+      self.SortOrderLabel.text = "Search Results: \(query)"
+        }
+        searchBar.text = ""
+    searchBar.endEditing(true)
+    searchController.isActive = false
+  }
+  func searchBarShouldEndEditing(_ searchBar: UISearchBar) -> Bool {
+    print(#function)
+    if searchBar.text != "" {
+      return true
+    } else {
+      searchBar.resignFirstResponder()
+      return false
+    }
+  }
+  
+  func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+    print(#function)
+    return true
   }
   
   func updateSearchResults(for searchController: UISearchController) {
