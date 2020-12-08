@@ -21,10 +21,12 @@ class ViewController: UIViewController {
   var data = [MovieData.Result]()
   let searchController = UISearchController(searchResultsController: nil)
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+  var recentSearches = [RecentSearch]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+    loadItems()
     title = Constants.appName
     collectionView.delegate = self
     collectionView.dataSource = self
@@ -146,20 +148,20 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
   //MARK: - Pagination
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//    if indexPath.row == data.count - 1{
-//      updateNextSet()
-//    }
+    if indexPath.row == data.count - 1{
+      updateNextSet()
+    }
   }
   
   func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//    print(indexPaths)
-    for index in indexPaths {
-      if index.row >= data.count - 4 {
-        updateNextSet()
-        print(pageNo)
-      }
-      break
-    }
+//   print(indexPaths)
+//    for index in indexPaths {
+//      if index.row >= data.count - 4 {
+//        updateNextSet()
+//        print(pageNo)
+//      }
+//      break
+//    }
   }
   
   func updateNextSet() {
@@ -193,7 +195,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
 extension ViewController: UISearchBarDelegate {
   func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
     guard let query = searchBar.text else {return}
-    if query == "" {
+    if query.isEmpty {
       return
     }
     let newRecentSearch = RecentSearch(context: context)
@@ -220,6 +222,15 @@ extension ViewController: UISearchBarDelegate {
       try context.save()
     } catch {
       print("Error saving Item \(error)")
+    }
+  }
+  
+  func loadItems() {
+    let request: NSFetchRequest<RecentSearch> = RecentSearch.fetchRequest()
+    do {
+      recentSearches = try context.fetch(request)
+    } catch {
+      print("Error loading Items \(error)")
     }
   }
 }
