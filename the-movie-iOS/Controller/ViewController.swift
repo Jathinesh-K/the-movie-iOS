@@ -25,6 +25,7 @@ class ViewController: UIViewController {
     title = Constants.appName
     collectionView.delegate = self
     collectionView.dataSource = self
+    collectionView.prefetchDataSource = self
     navigationItem.searchController = searchController
     searchController.searchBar.delegate = self
     searchController.obscuresBackgroundDuringPresentation = false
@@ -115,12 +116,14 @@ class ViewController: UIViewController {
 }
 //MARK: - CollectionView
 
-extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return data.count
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//    print(#function)
+//    print(indexPath)
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as? MovieCell else {return MovieCell()}
     cell.movieTitle.text = data[indexPath.row].title
     guard let posterPath = data[indexPath.row].posterPath else{return cell}
@@ -140,8 +143,19 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   //MARK: - Pagination
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    if indexPath.row == data.count - 1{
-      updateNextSet()
+//    if indexPath.row == data.count - 1{
+//      updateNextSet()
+//    }
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+//    print(indexPaths)
+    for index in indexPaths {
+      if index.row >= data.count - 4 {
+        updateNextSet()
+        print(pageNo)
+      }
+      break
     }
   }
   
