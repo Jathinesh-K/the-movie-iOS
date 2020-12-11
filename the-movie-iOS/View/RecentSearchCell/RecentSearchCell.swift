@@ -9,7 +9,7 @@ import UIKit
 
 class RecentSearchCell: UITableViewCell {
   @IBOutlet weak var recentSearchLabel: UILabel!
-  
+  var deleteButtonAction: (() -> Void)?
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -21,7 +21,7 @@ class RecentSearchCell: UITableViewCell {
         // Configure the view for the selected state
     }
   @IBAction func deleteButtonPressed(_ sender: UIButton) {
-    print("deletePressed")
+    deleteButtonAction?()
   }
   
 }

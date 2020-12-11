@@ -27,7 +27,7 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     recentSearchTable.isHidden = true
-//    print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+    //    print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     title = Constants.appName
     collectionView.delegate = self
     collectionView.dataSource = self
@@ -195,6 +195,7 @@ extension ViewController: UISearchBarDelegate {
     if query.isEmpty {
       return
     }
+    context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     let newRecentSearch = RecentSearch(context: context)
     newRecentSearch.item = query
     saveItem()
@@ -222,6 +223,8 @@ extension ViewController: UISearchBarDelegate {
     } catch {
       print("Error saving Item \(error)")
     }
+    
+    recentSearchTable.reloadData()
   }
   
   func loadItems() {
@@ -233,7 +236,7 @@ extension ViewController: UISearchBarDelegate {
     }
   }
 }
-
+//MARK: - TableView
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return recentSearches.count
@@ -243,14 +246,18 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellIdentifier, for: indexPath) as? RecentSearchCell else {
       fatalError()
     }
-//    cell.textLabel?.text = recentSearches[indexPath.row].item
     cell.recentSearchLabel.text = recentSearches[indexPath.row].item
+    cell.deleteButtonAction = { [unowned self] in
+      context.delete(recentSearches[indexPath.row])
+      recentSearches.remove(at: indexPath.row)
+      saveItem()
+    }
     return cell
   }
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    tableView.deselectRow(at: indexPath, animated: true)
     self.searchController.searchBar.text = recentSearches[indexPath.row].item
-  searchBarSearchButtonClicked(searchController.searchBar)
   }
   
 }
