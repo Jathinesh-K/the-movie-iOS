@@ -108,7 +108,7 @@ class ViewController: UIViewController {
           if self.pageNo == 1 {
             self.collectionView.reloadData()
           } else {
-            let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
+            let indexPath: [IndexPath] = (0...(self.data.count-lastIndex-1)).map {IndexPath(row: lastIndex + $0, section: 0)}
             self.collectionView.insertItems(at: indexPath)
           }
         }
@@ -177,7 +177,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 
 extension ViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.5)
+    return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.3)
   }
 }
 //MARK: - SearchBar
