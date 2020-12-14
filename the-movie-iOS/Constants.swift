@@ -8,6 +8,7 @@
 struct Constants {
   static let cellIdentifier = "cell"
   static let cellNibName = "MovieCell"
+  static let tableCellNibName = "RecentSearchCell"
   static let appName = "The Movie"
   static let detailsViewController = "DetailsViewController"
   static let RecentSearchViewController = "RecentSearchViewController"

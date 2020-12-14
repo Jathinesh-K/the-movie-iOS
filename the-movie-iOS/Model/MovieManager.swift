@@ -42,7 +42,8 @@ struct MovieManager {
   }
   
   func performRequest(with urlString: String, page: Int, _ completionHandler: @escaping (Result<MovieData, someError>) -> Void) {
-    if let url = URL(string: urlString + "&page=\(page)") {
+    guard let string = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {return}
+    if let url = URL(string: string + "&page=\(page)") {
       let session = URLSession(configuration: .default)
       let task = session.dataTask(with: url) { (data, response, error) in
         guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {return}

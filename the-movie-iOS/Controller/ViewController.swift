@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import CoreData
 import Kingfisher
 
 class ViewController: UIViewController {
   @IBOutlet weak var collectionView: UICollectionView!
   @IBOutlet weak var sortOrderButton: UIButton!
   @IBOutlet weak var SortOrderLabel: UILabel!
+  @IBOutlet weak var recentSearchTable: UITableView!
   
   var cellIndex = 0
   var pageNo: Int = 1
@@ -19,18 +21,22 @@ class ViewController: UIViewController {
   var movieManager = MovieManager()
   var data = [MovieData.Result]()
   let searchController = UISearchController(searchResultsController: nil)
+  let context = CoreDataStack.shared.persistentContainer.viewContext
+  var recentSearches = [RecentSearch]()
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    recentSearchTable.isHidden = true
+    //    print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
     title = Constants.appName
     collectionView.delegate = self
     collectionView.dataSource = self
-    collectionView.prefetchDataSource = self
+    recentSearchTable.dataSource = self
+    recentSearchTable.delegate = self
     navigationItem.searchController = searchController
     searchController.searchBar.delegate = self
     searchController.obscuresBackgroundDuringPresentation = false
     navigationItem.hidesSearchBarWhenScrolling = false
-    searchController.searchBar.showsSearchResultsButton = true
     
     let lastSortOrder = UserDefaults.standard.string(forKey: "Last Sort Order")
     apiCaller(lastSortOrder, nil)
@@ -102,7 +108,7 @@ class ViewController: UIViewController {
           if self.pageNo == 1 {
             self.collectionView.reloadData()
           } else {
-            let indexPath: [IndexPath] = (0...19).map {IndexPath(row: lastIndex + $0, section: 0)}
+            let indexPath: [IndexPath] = (0...(self.data.count-lastIndex-1)).map {IndexPath(row: lastIndex + $0, section: 0)}
             self.collectionView.insertItems(at: indexPath)
           }
         }
@@ -116,15 +122,15 @@ class ViewController: UIViewController {
 }
 //MARK: - CollectionView
 
-extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
+extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
     return data.count
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//    print(#function)
-//    print(indexPath)
-    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as? MovieCell else {return MovieCell()}
+    guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.cellIdentifier, for: indexPath) as? MovieCell else {
+      fatalError("Expected `\(MovieCell.self)` type for reuseIdentifier \(Constants.cellIdentifier). Check the configuration in Main.storyboard.")
+    }
     cell.movieTitle.text = data[indexPath.row].title
     guard let posterPath = data[indexPath.row].posterPath else{return cell}
     cell.moviePoster.tag = indexPath.row
@@ -143,19 +149,8 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
   //MARK: - Pagination
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//    if indexPath.row == data.count - 1{
-//      updateNextSet()
-//    }
-  }
-  
-  func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-//    print(indexPaths)
-    for index in indexPaths {
-      if index.row >= data.count - 4 {
-        updateNextSet()
-        print(pageNo)
-      }
-      break
+    if indexPath.row == data.count - 1{
+      updateNextSet()
     }
   }
   
@@ -182,17 +177,28 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
 
 extension ViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.5)
+    return CGSize(width: (collectionView.frame.width - 20)/2, height: collectionView.frame.height/2.3)
   }
 }
 //MARK: - SearchBar
 
 extension ViewController: UISearchBarDelegate {
   func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    self.collectionView.isHidden = false
+    self.recentSearchTable.isHidden = true
+    searchBar.endEditing(true)
+    searchController.isActive = false
+  }
+  
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
     guard let query = searchBar.text else {return}
-    if query == "" {
+    if query.isEmpty {
       return
     }
+    context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+    let newRecentSearch = RecentSearch(context: context)
+    newRecentSearch.item = query
+    saveItem()
     self.reinitializeData()
     self.apiCaller(nil, query)
     self.SortOrderLabel.text = "Search Results: \(query)"
@@ -202,10 +208,56 @@ extension ViewController: UISearchBarDelegate {
   }
   
   func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-    print(#function)
-    //    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-    //    guard let recentSearchViewController = storyboard.instantiateViewController(identifier: Constants.RecentSearchViewController) as? RecentSearchViewController else {return true}
-    //    self.navigationController?.pushViewController(recentSearchViewController, animated: true)
+    recentSearchTable.register(UINib(nibName: Constants.tableCellNibName, bundle: nil), forCellReuseIdentifier: Constants.cellIdentifier)
+    self.recentSearchTable.isHidden = false
+    self.collectionView.isHidden = true
+    loadItems()
+    recentSearchTable.reloadData()
     return true
   }
+  //MARK: - CoreData Functions
+  
+  func saveItem() {
+    do {
+      try context.save()
+    } catch {
+      print("Error saving Item \(error)")
+    }
+    
+    recentSearchTable.reloadData()
+  }
+  
+  func loadItems() {
+    let request: NSFetchRequest<RecentSearch> = RecentSearch.fetchRequest()
+    do {
+      recentSearches = try context.fetch(request)
+    } catch {
+      print("Error loading Items \(error)")
+    }
+  }
+}
+//MARK: - TableView
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return recentSearches.count
+  }
+  
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.cellIdentifier, for: indexPath) as? RecentSearchCell else {
+      fatalError()
+    }
+    cell.recentSearchLabel.text = recentSearches[indexPath.row].item
+    cell.deleteButtonAction = { [unowned self] in
+      context.delete(recentSearches[indexPath.row])
+      recentSearches.remove(at: indexPath.row)
+      saveItem()
+    }
+    return cell
+  }
+  
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    tableView.deselectRow(at: indexPath, animated: true)
+    self.searchController.searchBar.text = recentSearches[indexPath.row].item
+  }
+  
 }
